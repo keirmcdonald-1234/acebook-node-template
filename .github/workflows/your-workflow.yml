@@ -1,0 +1,59 @@
+# The name of the workflow. This will appear on the GitHub Actions tab.
+name: AWS CodeDeploy Deployment
+
+# This workflow will run on every push to the 'main' branch.
+on:
+  push:
+    branches:
+      - main
+
+# Define environment variables to make the script more readable and reusable.
+env:
+  # Replace with your CodeDeploy application name
+  CODEDEPLOY_APPLICATION_NAME: 'km-codedeploy'
+  # Replace with your CodeDeploy deployment group name
+  CODEDEPLOY_DEPLOYMENT_GROUP_NAME: 'km-deployment-group'
+  # Replace with the name of your S3 bucket for artifacts
+  S3_BUCKET_NAME: 'km-main-cloud-provider'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout the repository code.
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Configure AWS credentials.
+      # This action sets up the AWS credentials from your GitHub Secrets.
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      # Step 3: Prepare the deployment artifact.
+      # This step creates a ZIP file of your application files that CodeDeploy will use.
+      # It's crucial that this ZIP file includes your `appspec.yml` file in the root.
+      - name: Create Deployment Package
+        run: |
+          zip -r deployment-package.zip . -x ".git/*" ".github/*"
+
+      # Step 4: Upload the artifact to S3.
+      # This step uploads the deployment package to an S3 bucket.
+      # CodeDeploy will fetch the artifact from this location.
+      - name: Upload to S3
+        run: aws s3 cp deployment-package.zip s3://km-main-cloud-provider/deployment-package.zip
+
+      # Step 5: Trigger the CodeDeploy deployment.
+      # This is the key step. It tells CodeDeploy to start a new deployment
+      # using the artifact you just uploaded to S3.
+      - name: Trigger CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name km-codedeploy \
+            --deployment-group-name km-deployment-group \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --s3-location bucket=km-main-cloud-provider,key=deployment-package.zip,bundleType=zip
