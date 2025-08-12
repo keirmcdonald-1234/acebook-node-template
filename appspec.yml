@@ -3,6 +3,9 @@ os: linux
 files:
   - source: /
     destination: /var/www/my-app # The destination on your EC2 instance
+  - source: scripts/my-app.service
+    destination: /etc/systemd/system/
+
 hooks:
   BeforeInstall:
     - location: scripts/BeforeInstall.sh
