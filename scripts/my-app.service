@@ -1,0 +1,26 @@
+[Unit]
+Description=My Sample Web Application
+# This specifies that the service should only start after the network is up.
+After=network.target
+
+[Service]
+# The user and group under which the service will run.
+# It's best practice to use a non-root user like 'ec2-user'.
+User=ec2-user
+Group=ec2-user
+
+# Defines the directory where the application is installed.
+# This should match the 'destination' in your appspec.yml.
+WorkingDirectory=/var/www/my-app
+
+# The command that starts your application.
+# For a Node.js app, this might be 'npm start' or 'node app.js'.
+# Adjust this path and command based on your application.
+ExecStart=/usr/bin/npm start
+
+# Restarts the service if it fails.
+Restart=always
+
+[Install]
+# This line is for enabling the service to start at boot.
+WantedBy=multi-user.target

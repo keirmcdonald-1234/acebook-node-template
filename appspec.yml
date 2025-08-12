@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /var/www/my-app # The destination on your EC2 instance
+    destination: /var/www/html/ # The destination on your EC2 instance
   - source: scripts/my-app.service
     destination: /etc/systemd/system/
 
