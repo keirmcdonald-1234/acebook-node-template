@@ -14,7 +14,7 @@ env:
   # Replace with your CodeDeploy deployment group name
   CODEDEPLOY_DEPLOYMENT_GROUP_NAME: 'km-deployment-group'
   # Replace with the name of your S3 bucket for artifacts
-  S3_BUCKET_NAME: 'km-main-cloud-provider'
+  S3_BUCKET_NAME: 'km-main-cloud-provider2'
 
 jobs:
   deploy:
@@ -45,7 +45,7 @@ jobs:
       # This step uploads the deployment package to an S3 bucket.
       # CodeDeploy will fetch the artifact from this location.
       - name: Upload to S3
-        run: aws s3 cp deployment-package.zip s3://km-main-cloud-provider/deployment-package.zip
+        run: aws s3 cp deployment-package.zip s3://km-main-cloud-provider2/deployment-package.zip
 
       # Step 5: Trigger the CodeDeploy deployment.
       # This is the key step. It tells CodeDeploy to start a new deployment
@@ -56,4 +56,4 @@ jobs:
             --application-name km-codedeploy \
             --deployment-group-name km-deployment-group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
-            --s3-location bucket=km-main-cloud-provider,key=deployment-package.zip,bundleType=zip
+            --s3-location bucket=km-main-cloud-provider2,key=deployment-package.zip,bundleType=zip
