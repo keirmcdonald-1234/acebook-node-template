@@ -34,7 +34,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
 
-      # Step 3: Prepare the deployment artifact.
+      # Step 3: Prepare the deployment artifact..
       # This step creates a ZIP file of your application files that CodeDeploy will use.
       # It's crucial that this ZIP file includes your `appspec.yml` file in the root.
       - name: Create Deployment Package
